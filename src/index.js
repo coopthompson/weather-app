@@ -1,16 +1,36 @@
 import "./style.css"
+const location = document.getElementById('location')
+const submit = document.querySelector('.sub-button')
 
 
-async function test() {
-    let testGrab = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Denver&APPID=79cee3391283fc4faeb148d2b8050282', {mode: 'cors'});
-    let dataManip = await testGrab.json();
-    let curTemp = dataManip.main.temp;
-    console.table(curTemp);
+async function fetchFrom(place) {
+    try {
+        let testGrab = await fetch(place, {mode: 'cors'});
+        let dataManip = await testGrab.json();
+        let curTemp = dataManip.main.temp;
+        console.table(curTemp);
+        return curTemp;
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-test();
-toFarenheit(254.45);
-toCelsius(254.45);
+//add inserts to the link for location
+function pickLocation() {
+    let link = `https://api.openweathermap.org/data/2.5/weather?q=${location.value}&APPID=79cee3391283fc4faeb148d2b8050282`
+    return link;
+}
+
+submit.addEventListener('click', async function () {
+    try {
+        let cityName = pickLocation();
+        let kelTemp = await fetchFrom(cityName);
+        await toFarenheit(kelTemp);
+        await toCelsius(kelTemp); 
+    } catch (err) {
+        console.error(err)
+    } 
+}) 
 
 //convert from Kelvin to Farenheit to nearest integer
 function toFarenheit(Kelvin) {
